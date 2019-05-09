@@ -1,0 +1,16 @@
+{
+	"output" 	 : "Bow_Sharpshooter_Advantage",
+	"Ntotal"	 : 1000000,
+	"Attacks" : 
+		[
+			{
+				"AC"		 	: 14,
+				"CritRange"	 	: 20,
+				"ToHitBonus" 	: 3,
+				"Advantage"	 	: 1,
+				"NrDice" 		: [0,1,0,0,0],
+				"DamageBonus"	: 15,			
+				"Reroll"	 	: 0			
+			}
+		]
+}

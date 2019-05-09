@@ -1,0 +1,15 @@
+{
+	"output" 	 : "Fireball",
+	"Ntotal"	 : 500000,
+	"Spells" :
+		[
+			{
+				"NetDC"			: 14,
+				"FailDMG"		: 0.5,
+				"Advantage"		: 0,
+				"NrDice" 		: [0,8,0,0,0],
+				"DamageBonus"	: 4,
+				"Reroll"		: 0
+			}
+		]
+}

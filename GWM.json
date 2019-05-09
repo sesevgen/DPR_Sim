@@ -1,0 +1,29 @@
+{
+	"output" 	 : "GMW_2attacks_+8_adv",
+	"Ntotal"	 : 1000000,
+	"Attacks" : 
+		[
+			{
+				"AC"		 	: 17,
+				"CritRange"	 	: 20,
+				"ToHitBonus" 	: 3,
+				"Advantage"	 	: 1,
+				"NrDice" 		: [0,2,0,0,0],
+				"DamageBonus"	: 15,
+				"Resistance"	: 0,
+				"DiceMin"		: 0,
+				"Reroll"	 	: 0			
+			},
+						{
+				"AC"		 	: 17,
+				"CritRange"	 	: 20,
+				"ToHitBonus" 	: 3,
+				"Advantage"	 	: 1,
+				"NrDice" 		: [0,2,0,0,0],
+				"DamageBonus"	: 15,
+				"Resistance"	: 0,
+				"DiceMin"		: 0,
+				"Reroll"	 	: 0			
+			}
+		]
+}

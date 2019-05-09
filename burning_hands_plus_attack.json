@@ -1,0 +1,27 @@
+{
+	"output" 	 : "BA_plus_Atk",
+	"Ntotal"	 : 500000,
+	"Attacks" : 
+		[
+			{
+				"AC"		 	: 14,
+				"CritRange"	 	: 20,
+				"ToHitBonus" 	: 8,
+				"Advantage"	 	: 0,
+				"NrDice" 		: [0,2,0,0,0],
+				"DamageBonus"	: 5,			
+				"Reroll"	 	: 2			
+			}
+		],
+	"Spells" :
+		[
+			{
+				"NetDC"			: 14,
+				"FailDMG"		: 0.5,
+				"Advantage"		: 0,
+				"NrDice" 		: [0,3,0,0,0],
+				"DamageBonus"	: 0,
+				"Reroll"		: 0
+			}
+		]
+}

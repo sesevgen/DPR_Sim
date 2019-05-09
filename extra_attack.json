@@ -1,0 +1,25 @@
+{
+	"output" 	 : "Extra_Attack",
+	"Ntotal"	 : 1000000,
+	"Attacks" : 
+		[
+			{
+				"AC"		 	: 14,
+				"CritRange"	 	: 20,
+				"ToHitBonus" 	: 8,
+				"Advantage"	 	: 0,
+				"NrDice" 		: [0,2,0,0,0],
+				"DamageBonus"	: 5,			
+				"Reroll"	 	: 2			
+			},
+			{
+				"AC"		 	: 14,
+				"CritRange"	 	: 20,
+				"ToHitBonus" 	: 8,
+				"Advantage"	 	: 0,
+				"NrDice" 		: [0,2,0,0,0],
+				"DamageBonus"	: 5,
+				"Reroll"	 	: 2					
+			}
+		]
+}

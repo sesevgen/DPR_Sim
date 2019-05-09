@@ -1,0 +1,8 @@
+Average DPR: 35.09883
+Max Damage Recorded: 89
+
+Miss Percentage per Attack: 2.72133333333
+Chance to Miss at Least Once Per Round: 7.931
+Complete miss percentage (no attacks connect in a round): 0.0
+Critical Hits :14.247
+Chance to Score at Least One Crit Per Round :36.991
