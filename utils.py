@@ -106,7 +106,7 @@ class Statistics:
     disadvantage: Whether multiple d20s are rolled with advantage or disadvantage    
     '''
     
-    def __init__(self,Action,d20_success_target,nr_d20s=1,fail_dmg_scale=0.0,dmg_scale=1.0,disadvantage=False):
+    def __init__(self,Action,d20_success_target,nr_d20s=1,fail_dmg_scale=0.0,dmg_scale=1.0,disadvantage=False,crit_scale=2.0):
         self.Action = Action
         self.d20_success_target=d20_success_target
         self.nr_d20s=nr_d20s
