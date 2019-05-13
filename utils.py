@@ -3,41 +3,6 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-class Statistics:
-    '''
-    Runs simulations, collects statistics and generates graphs on a given Action with provided conditions
-    
-    Inputs:
-    Action: The Action to collect statistics on
-    d20_success_target: Adjusted (post modifiers) number on the d20 to meet or exceed for a success
-    nr_d20s: Number of d20s to roll to determine success. 1 is regular, 2 is for advantage or disadvantage, 3 is elven accuracy
-    fail_dmg_scale: Damage of a failed Action. Attacks usually deal no damage (0.0), but some spells fail for half (0.5)
-    dmg_scale: Overall damage scale. Resistance = 0.5, Vulnerability = 2.0
-    disadvantage: Whether multiple d20s are rolled with advantage or disadvantage    
-    '''
-    
-    def __init__(self,Action,d20_success_target,nr_d20s=1,fail_dmg_scale=0.0,dmg_scale=1.0,disadvantage=False,crit_scale=2.0):        
-        self.statistics = []
-        self.max_damage = 0
-        self.min_damage = 0
-        
-    def reset_statistics(self):
-        self.statistics = []
-
-    def append(self,val):
-        self.statistics.append(val)
-        
-    def plot_histogram(self):    
-        plot=plt.figure()
-        plt.hist(self.statistics,bins=self.max_damage+1,range=[-0.5,self.max_damage+0.5])
-        return plot
-
-    def plot_cumulative(self):        
-        plot=plt.figure()
-        plt.hist(self.statistics,bins=self.max_damage+1,range=[-0.5,self.max_damage+0.5],cumulative=-1,histtype='step')
-        return plot
-        
-
 class Action:
     '''
     A class that holds details and methods relating to a DnD action
@@ -53,24 +18,40 @@ class Action:
     nr_dice_reroll: Reroll the smallest X number of dice, where X is this number. Ex: Empower: 5
     '''
     
-    def __init__(self,dice,instances=1,per_instance_modifier=0,per_round_modifier=0,reroll_equal_to=[],min_roll=1,nr_dice_reroll=0,d20_success_target,nr_d20s=1,fail_dmg_scale=0.0,dmg_scale=1.0,disadvantage=False,crit_numbers=[20],crit_scale=2.0,crit_extra_dice=[]):
-        self.dice = dice
-        self.instances=instances
-        self.per_instance_modifier=per_instance_modifier
-        self.per_round_modifier=per_round_modifier
-        self.reroll_equal_to=reroll_equal_to
-        self.min_roll=min_roll
-        self.nr_dice_reroll=nr_dice_reroll
-        self.d20_success_target=d20_success_target
-        self.nr_d20s=nr_d20s
-        self.fail_dmg_scale=fail_dmg_scale
-        self.dmg_scale=dmg_scale
-        self.disadvantage=disadvantage
-        self.crit_numbers=crit_numbers
-        self.crit_scale=crit_scale
-        self.crit_extra_dice=crit_extra_dice
-        
-        self.statistics = Statistics()
+    def __init__(self,
+                 per_instance_dice,
+                 instances = 1,
+                 per_instance_modifier = 0,
+                 per_round_dice = [],
+                 per_round_modifier = 0,
+                 reroll_equal_to = [],
+                 min_roll = 1,
+                 nr_dice_reroll = 0,
+                 d20_success_target,
+                 nr_d20s = 1,
+                 fail_dmg_scale = 0.0,
+                 dmg_scale = 1.0,
+                 disadvantage = False,
+                 crit_numbers = [20],
+                 crit_scale = 2.0,
+                 crit_extra_dice = []):
+                 
+        self.per_instance_dice = per_instance_dice
+        self.instances = instances
+        self.per_instance_modifier = per_instance_modifier
+        self.per_round_dice = per_round_dice
+        self.per_round_modifier = per_round_modifier
+        self.reroll_equal_to = reroll_equal_to
+        self.min_roll = min_roll
+        self.nr_dice_reroll = nr_dice_reroll
+        self.d20_success_target = d20_success_target
+        self.nr_d20s = nr_d20s
+        self.fail_dmg_scale = fail_dmg_scale
+        self.dmg_scale = dmg_scale
+        self.disadvantage = disadvantage
+        self.crit_numbers = crit_numbers
+        self.crit_scale = crit_scale
+        self.crit_extra_dice = crit_extra_dice
     
     def rolld20s(self):
         '''
@@ -147,81 +128,78 @@ class Action:
         # For each instance
         for i in range(self.instances):
         
-            success=False
-            crit=False
+            success = False
+            crit = False
         
             d20 = self.rolld20s()
             if d20 in self.crit_numbers:
-                crit=True
-                success=True
-                at_least_one_success=True
+                crit = True
+                success = True
+                at_least_one_success = True
                 
-            elif d20 >= self.d20_success_target:
-                success=True
-                at_least_one_success=True
+            elif d20 >=  self.d20_success_target:
+                success = True
+                at_least_one_success = True
                 
             if crit:
-                    total += self.roll_all(self.dice)*self.crit_scale + self.roll_all(self.crit_extra_dice) + self.per_instance_modifier
+                    total +=  self.roll_all(self.dice)*self.crit_scale + self.roll_all(self.crit_extra_dice) + self.per_instance_modifier
             elif success:    
-                total += self.roll_all(self.dice) + self.per_instance_modifier
-        
-        return total + self.per_round_modifier
-        
-    def collect_statistics(self,N,append=False):
-        '''
-        Performs a single attack or spell N times, collecting statistics on the damage
-        
-        Takes into account to-hit or resist DC and the fail outcome, advantage or disadvantage, and resistance
-        
-        Inputs:
-        N: Number of times to perform action
-        Action: The Action to perform
-                
-        '''
-        
-        if not append:
-            self.statistics.reset_statistics()
-
-        for i in range(N):
-            
-            if d20 >= self.d20_success_target:
-                damage=self.Action.perform()
+                total +=  self.roll_all(self.dice) + self.per_instance_modifier
             else:
-                damage=self.Action.perform()*self.fail_dmg_scale
-               
-            self.statistics.append(damage)
+                total +=  (self.roll_all(self.dice) + self.per_instance_modifier)*self.fail_dmg_scale
         
-        self.max_damage=max(self.statistics)
-        self.min_damage=min(self.statistics)
+        if at_least_one_success:
+            return total + self.per_round_modifier + self.roll_all(self.per_round_dice)
+        else:
+            return total
         
     def __str__(self):
         return 'Dice: {}\nInstances: {}\nPer Instance Modifier: {}\nPer Round Modifier: {}\nRerolling Dice Equal to: {}\nMinimum Roll: {}\nNumber of Dice Rerolled: {}'.format(
         self.dice, self.instances, self.per_instance_modifier, self.per_round_modifier, self.reroll_equal_to, self.min_roll, self.nr_dice_reroll)
+    
+
+class Statistics:
+    '''
+    Runs simulations, collects statistics and generates graphs on a given Action with provided conditions
+    
+    Inputs:
+    Action: The Action to collect statistics on
+    d20_success_target: Adjusted (post modifiers) number on the d20 to meet or exceed for a success
+    nr_d20s: Number of d20s to roll to determine success. 1 is regular, 2 is for advantage or disadvantage, 3 is elven accuracy
+    fail_dmg_scale: Damage of a failed Action. Attacks usually deal no damage (0.0), but some spells fail for half (0.5)
+    dmg_scale: Overall damage scale. Resistance = 0.5, Vulnerability = 2.0
+    disadvantage: Whether multiple d20s are rolled with advantage or disadvantage    
+    '''
+    
+    def __init__(self,Action,d20_success_target,nr_d20s = 1,fail_dmg_scale = 0.0,dmg_scale = 1.0,disadvantage = False,crit_scale = 2.0):        
+        self.statistics = []
+        self.max_damage = 0
+        self.min_damage = 0
+        self.action = Action
         
+    def reset_statistics(self):
+        self.statistics = []
+        
+    def plot_histogram(self):    
+        plot = plt.figure()
+        plt.hist(self.statistics,bins = self.max_damage+1,range = [-0.5,self.max_damage+0.5])
+        return plot
+
+    def plot_cumulative(self):        
+        plot = plt.figure()
+        plt.hist(self.statistics,bins = self.max_damage+1,range = [-0.5,self.max_damage+0.5],cumulative = -1,histtype = 'step')
+        return plot    
+        
+    def collect_statistics(self,N,append = False):
+        if not append:
+            self.reset_statistics()
+
+        for i in range(N):               
+            self.statistics.append(self.action.perform())
+            
+        self.max_damage = max(self.statistics)
+        self.min_damage = min(self.statistics)
     
-if __name__ == '__main__':
-    print("Testing functions")
-    
-    dummy_action = Action([(1,6),(1,4),(1,8)],per_instance_modifier=4,reroll_equal_to=[1,2])
-    print(dummy_action)
-    
-    print('-----------------------------------------------------------------------------')
-    print("Testing 'roll_with_adjustments'")
-    for dice in dummy_action.dice:
-        print('Rolling a d{}: '.format(dice[1]),dummy_action.roll_with_adjustments(dice[1]))
-    
-    print('-----------------------------------------------------------------------------')
-    print("Testing 'perform'")
-    print('Damage is: {}'.format(dummy_action.perform()))    
-    
-    print('-----------------------------------------------------------------------------')
-    print("Testing 'roll_d20s'")
-    print('One d20: {}'.format(rolld20s()))
-    print('Elven accuracy d20s: {}'.format(rolld20s(3)))
-    print('Disadvantage d20s: {}'.format(rolld20s(2,True)))
-    
-    print('-----------------------------------------------------------------------------')
-    print("Testing 'collect_statistics_on_action'")
-    print('N: 100, target:5')
-    print(collect_statistics_on_action(100,5,dummy_action))
+if __name__ ==  '__main__':
+    print("hey")
     

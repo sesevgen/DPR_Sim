@@ -1,12 +1,8 @@
 from utils import Action, Statistics
 from plotting import *
 
-dummy_action = Action([(1,6),(1,4),(1,8)],per_instance_modifier=4,reroll_equal_to=[1,2])
-statistics = Statistics(dummy_action,5)
+action = Action([(3,6)])
+stats = Statistics(action,10)
 
-statistics.collect_statistics(100000)
-
-statistics.plot_histogram()
-plt.savefig('hist')
-
-
+stats.collect_statistics()
+stats.plot_histogram()
