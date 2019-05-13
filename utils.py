@@ -1,6 +1,10 @@
 import random
-import matplotlib
-matplotlib.use('Agg')
+import os
+have_display = bool(os.environ.get('DISPLAY', None))
+if not have_display:
+    import matplotlib
+    matplotlib.use('Agg')
+    
 import matplotlib.pyplot as plt
 
 class Action:
@@ -20,6 +24,7 @@ class Action:
     
     def __init__(self,
                  per_instance_dice,
+                 d20_success_target,
                  instances = 1,
                  per_instance_modifier = 0,
                  per_round_dice = [],
@@ -27,7 +32,6 @@ class Action:
                  reroll_equal_to = [],
                  min_roll = 1,
                  nr_dice_reroll = 0,
-                 d20_success_target,
                  nr_d20s = 1,
                  fail_dmg_scale = 0.0,
                  dmg_scale = 1.0,
@@ -93,25 +97,30 @@ class Action:
         return roll
         
     def roll_all(self,dice_set):
-        # For each dice type
-        for d in dice_set:
         
-            # Initialize rolls list for rerolling lowest
-            rolls = []
+        if len(dice_set) == 0:
+            return 0
+         
+        else:        
+            # For each dice type
+            for d in dice_set:
+            
+                # Initialize rolls list for rerolling lowest
+                rolls = []
 
-            # Roll the number of requested dice for the dice type
-            for i in range(d[0]):
-                roll = self.roll_with_adjustments(d[1])
-                rolls.append(roll)
-                
-            # Sort lowest to highest
-            rolls.sort()
+                # Roll the number of requested dice for the dice type
+                for i in range(d[0]):
+                    roll = self.roll_with_adjustments(d[1])
+                    rolls.append(roll)
+                    
+                # Sort lowest to highest
+                rolls.sort()
 
-            # Reroll the lowest X
-            for i in range(self.nr_dice_reroll):
-                rolls[i] = self.roll_with_adjustments(d[1])
-                
-        return sum(rolls)
+                # Reroll the lowest X
+                for i in range(self.nr_dice_reroll):
+                    rolls[i] = self.roll_with_adjustments(d[1])
+                    
+            return sum(rolls)
     
     def perform(self):
         '''
@@ -142,20 +151,20 @@ class Action:
                 at_least_one_success = True
                 
             if crit:
-                    total +=  self.roll_all(self.dice)*self.crit_scale + self.roll_all(self.crit_extra_dice) + self.per_instance_modifier
+                    total +=  self.roll_all(self.per_instance_dice)*self.crit_scale + self.roll_all(self.crit_extra_dice) + self.per_instance_modifier
             elif success:    
-                total +=  self.roll_all(self.dice) + self.per_instance_modifier
+                total +=  self.roll_all(self.per_instance_dice) + self.per_instance_modifier
             else:
-                total +=  (self.roll_all(self.dice) + self.per_instance_modifier)*self.fail_dmg_scale
+                total +=  (self.roll_all(self.per_instance_dice) + self.per_instance_modifier)*self.fail_dmg_scale
         
         if at_least_one_success:
-            return total + self.per_round_modifier + self.roll_all(self.per_round_dice)
+            return int(total + self.per_round_modifier + self.roll_all(self.per_round_dice))
         else:
-            return total
+            return int(total)
         
     def __str__(self):
         return 'Dice: {}\nInstances: {}\nPer Instance Modifier: {}\nPer Round Modifier: {}\nRerolling Dice Equal to: {}\nMinimum Roll: {}\nNumber of Dice Rerolled: {}'.format(
-        self.dice, self.instances, self.per_instance_modifier, self.per_round_modifier, self.reroll_equal_to, self.min_roll, self.nr_dice_reroll)
+        self.per_instance_dice, self.instances, self.per_instance_modifier, self.per_round_modifier, self.reroll_equal_to, self.min_roll, self.nr_dice_reroll)
     
 
 class Statistics:
@@ -171,7 +180,7 @@ class Statistics:
     disadvantage: Whether multiple d20s are rolled with advantage or disadvantage    
     '''
     
-    def __init__(self,Action,d20_success_target,nr_d20s = 1,fail_dmg_scale = 0.0,dmg_scale = 1.0,disadvantage = False,crit_scale = 2.0):        
+    def __init__(self,Action):        
         self.statistics = []
         self.max_damage = 0
         self.min_damage = 0
@@ -181,16 +190,16 @@ class Statistics:
         self.statistics = []
         
     def plot_histogram(self):    
-        plot = plt.figure()
-        plt.hist(self.statistics,bins = self.max_damage+1,range = [-0.5,self.max_damage+0.5])
-        return plot
+        #plot = plt.figure()
+        plt.hist(self.statistics,bins = self.max_damage+1,range = [-0.5,self.max_damage+0.5],density=True)
+        #return plot
 
     def plot_cumulative(self):        
-        plot = plt.figure()
+        #plot = plt.figure()
         plt.hist(self.statistics,bins = self.max_damage+1,range = [-0.5,self.max_damage+0.5],cumulative = -1,histtype = 'step')
-        return plot    
+        #return plot    
         
-    def collect_statistics(self,N,append = False):
+    def collect_statistics(self,N=100000,append = False):
         if not append:
             self.reset_statistics()
 
