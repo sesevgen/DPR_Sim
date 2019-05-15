@@ -1,7 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
-  <div class="jumbo">
-    <h2>Welcome to the Flask app<h2>
-    <h3>This is the home page for the Flask app<h3>
-  </div>
+    <div class="jumbo">
+        <h2>DPR Simulator<h2>
+    </div>
+    <form action="/register" method="post">
+        Roll
+        <input autocomplete="off" autofocus name="name" placeholder="8" type="text" size="1"/>
+        d
+        <input autocomplete="off" autofocus name="name" placeholder="6" type="text"size="1"/>
+        <input type="submit" value="Calculate DPR"/>
+        
+        <img src="/calculate" alt="static/img/placeholder.png">
+    </form>
 {% endblock %}
