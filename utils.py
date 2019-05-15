@@ -7,6 +7,91 @@ if not have_display:
     
 import matplotlib.pyplot as plt
 
+class Diceset:
+    '''
+    A class that holds a set of dice and modifications and allows rolling subject to modifications
+    
+    Inputs:
+    dice: List of tuples (Nr of dice, sides of dice) to roll
+    reroll_equal_to: Reroll dice that are equal to numbers in this list. Ex: Great Weapon Fighting [1,2]
+    min_roll: Rolls less than this number are set to this number. Ex: Elemental Adept 2
+    nr_dice_reroll: Reroll the smallest X number of dice, where X is this number. Ex: Empower X = 5 for Cha = 5
+    '''
+    
+    
+    def __init__( self,
+                dice=[],
+                reroll_equal_to = [],
+                roll_min = 0,
+                nr_dice_reroll = 0):
+                
+        self.dice = dice
+        self.reroll_equal_to = reroll_equal_to
+        self.roll_min = roll_min
+        self.nr_dice_reroll = nr_dice_reroll
+        
+    def roll_one_dice(self,dice_max):
+
+        # Roll one of the dice
+        roll = random.randint(1,dice_max)
+        
+        # Reroll if in reroll list
+        if roll in self.reroll_equal_to:
+            roll = random.randint(1,dice_max)
+        
+        # Check if it's more than the min
+        roll = max(roll,self.roll_min)
+        
+        return roll
+        
+    def roll_all_dice(self):
+        if len(self.dice) == 0:
+            return []
+         
+        else:        
+            # For each dice type
+            for d in self.dice:
+            
+                # Initialize rolls list for rerolling lowest
+                rolls = []
+
+                # Roll the number of requested dice for the dice type
+                for i in range(d[0]):
+                    rolls.append(self.roll_one_dice(d[1]))
+                    
+                # Sort lowest to highest
+                rolls.sort()
+
+                # Reroll the lowest X
+                for i in range(self.nr_dice_reroll):
+                    rolls[i] = self.roll_one_dice(d[1])
+                    
+            return rolls
+            
+    def sum_dice(self):
+        return sum(self.roll_all_dice())
+            
+class d20Set(Diceset):
+    '''
+    Handles advantage and disadvantage
+    '''
+    def __init__(self,
+                 nr_dice,
+                 adv = True,
+                 reroll_equal_to=[],
+                 roll_min = 0,
+                 nr_dice_reroll = 0):
+                 
+        super().__init__([(nr_dice,20)],reroll_equal_to,roll_min,nr_dice_reroll)
+        self.adv = adv
+
+    def outcome(self):
+        if self.adv:
+            return max(self.roll_all_dice())
+        else:
+            return min(self.roll_all_dice())
+            
+
 class Action:
     '''
     A class that holds details and methods relating to a DnD action
@@ -17,110 +102,37 @@ class Action:
     instances: Number of times the action is performed per round. This can be number of targets of fireball, number of magic missiles, or number of attacks from Extra Attack
     per_instance_modifier: Amount of flat damage to add to each instance.
     per_round_modifier: Amount of flat damage to add once.
-    reroll_equal_to: Reroll dice that are equal to numbers in this list. Ex: Great Weapon Fighting [1,2]
-    min_roll: Rolls less than this number are set to this number. Ex: Elemental Adept 2
+    reroll_equal_to: Reroll dice that are equal to numbers in this list. 
+
     nr_dice_reroll: Reroll the smallest X number of dice, where X is this number. Ex: Empower: 5
     '''
     
     def __init__(self,
-                 per_instance_dice,
-                 d20_success_target,
+                 d20_diceset,
+                 d20_target,
+                 per_instance_diceset,
                  instances = 1,
                  per_instance_modifier = 0,
-                 per_round_dice = [],
+                 per_round_diceset = Diceset(),
                  per_round_modifier = 0,
-                 reroll_equal_to = [],
-                 min_roll = 1,
-                 nr_dice_reroll = 0,
-                 nr_d20s = 1,
-                 fail_dmg_scale = 0.0,
                  dmg_scale = 1.0,
-                 disadvantage = False,
+                 fail_dmg_scale = 0.0,
                  crit_numbers = [20],
                  crit_scale = 2.0,
-                 crit_extra_dice = []):
+                 per_crit_diceset = Diceset()):
                  
-        self.per_instance_dice = per_instance_dice
+        self.d20_diceset = d20_diceset
+        self.d20_target = d20_target
+        self.per_instance_diceset = per_instance_diceset
         self.instances = instances
         self.per_instance_modifier = per_instance_modifier
-        self.per_round_dice = per_round_dice
+        self.per_round_diceset = per_round_diceset
         self.per_round_modifier = per_round_modifier
-        self.reroll_equal_to = reroll_equal_to
-        self.min_roll = min_roll
-        self.nr_dice_reroll = nr_dice_reroll
-        self.d20_success_target = d20_success_target
-        self.nr_d20s = nr_d20s
-        self.fail_dmg_scale = fail_dmg_scale
         self.dmg_scale = dmg_scale
-        self.disadvantage = disadvantage
+        self.fail_dmg_scale = fail_dmg_scale
         self.crit_numbers = crit_numbers
         self.crit_scale = crit_scale
-        self.crit_extra_dice = crit_extra_dice
-    
-    def rolld20s(self):
-        '''
-        Rolls d20s subject to advantage or disadvantage or elven accuracy
-        '''
-        
-        d20s = []
-        for i in range(self.nr_d20s):
-            d20s.append(random.randint(1,20))
-        
-        if self.disadvantage:
-            return min(d20s)
-        else:
-            return max(d20s)  
-        
-    def roll_with_adjustments(self,dice_max):
-        '''
-        Rolls a single dice and adjusts
-        
-        Inputs:
-        dice_max: maximum number the dice can roll
-        min_roll: numbers less than this number are set to this number
-        reroll_equal_to: numbers equal to any number in this list are rerolled once
-        
-        Output:
-        The outcome after adjustments
-        '''
-        
-        # Roll one of the dice
-        roll = random.randint(1,dice_max)
-        
-        # Reroll if in reroll list
-        if roll in self.reroll_equal_to:
-            roll = random.randint(1,dice_max)
-        
-        # Check if it's more than the min
-        roll = max(roll,self.min_roll)
-        
-        return roll
-        
-    def roll_all(self,dice_set):
-        
-        if len(dice_set) == 0:
-            return 0
-         
-        else:        
-            # For each dice type
-            for d in dice_set:
-            
-                # Initialize rolls list for rerolling lowest
-                rolls = []
-
-                # Roll the number of requested dice for the dice type
-                for i in range(d[0]):
-                    roll = self.roll_with_adjustments(d[1])
-                    rolls.append(roll)
-                    
-                # Sort lowest to highest
-                rolls.sort()
-
-                # Reroll the lowest X
-                for i in range(self.nr_dice_reroll):
-                    rolls[i] = self.roll_with_adjustments(d[1])
-                    
-            return sum(rolls)
+        self.per_crit_diceset = per_crit_diceset
     
     def perform(self):
         '''
@@ -140,32 +152,27 @@ class Action:
             success = False
             crit = False
         
-            d20 = self.rolld20s()
+            d20 = self.d20_diceset.outcome()
             if d20 in self.crit_numbers:
                 crit = True
                 success = True
                 at_least_one_success = True
                 
-            elif d20 >=  self.d20_success_target:
+            elif d20 >=  self.d20_target:
                 success = True
                 at_least_one_success = True
                 
             if crit:
-                    total +=  self.roll_all(self.per_instance_dice)*self.crit_scale + self.roll_all(self.crit_extra_dice) + self.per_instance_modifier
+                total += self.per_instance_diceset.sum_dice()*self.crit_scale + self.per_crit_diceset.sum_dice() + self.per_instance_modifier
             elif success:    
-                total +=  self.roll_all(self.per_instance_dice) + self.per_instance_modifier
+                total += self.per_instance_diceset.sum_dice() + self.per_instance_modifier
             else:
-                total +=  (self.roll_all(self.per_instance_dice) + self.per_instance_modifier)*self.fail_dmg_scale
+                total += (self.per_instance_diceset.sum_dice() + self.per_instance_modifier)*self.fail_dmg_scale
         
         if at_least_one_success:
-            return int(total + self.per_round_modifier + self.roll_all(self.per_round_dice))
+            return int(total + self.per_round_modifier + self.per_round_diceset.sum_dice())
         else:
             return int(total)
-        
-    def __str__(self):
-        return 'Dice: {}\nInstances: {}\nPer Instance Modifier: {}\nPer Round Modifier: {}\nRerolling Dice Equal to: {}\nMinimum Roll: {}\nNumber of Dice Rerolled: {}'.format(
-        self.per_instance_dice, self.instances, self.per_instance_modifier, self.per_round_modifier, self.reroll_equal_to, self.min_roll, self.nr_dice_reroll)
-    
 
 class Statistics:
     '''
@@ -180,11 +187,11 @@ class Statistics:
     disadvantage: Whether multiple d20s are rolled with advantage or disadvantage    
     '''
     
-    def __init__(self,Action):        
+    def __init__(self,action):        
         self.statistics = []
         self.max_damage = 0
         self.min_damage = 0
-        self.action = Action
+        self.action = action
         
     def reset_statistics(self):
         self.statistics = []

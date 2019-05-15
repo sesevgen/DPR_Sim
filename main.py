@@ -1,19 +1,15 @@
-from utils import Action, Statistics
+from utils import Diceset, d20Set, Action, Statistics
 import matplotlib.pyplot as plt
 
-action = Action([(3,6)],10)
+
+
+d20 = d20Set(1)
+diceset = Diceset([(8,6)])
+action = Action(d20,10,diceset,crit_numbers=[],fail_dmg_scale=0.5)  
 stats = Statistics(action)
+stats.collect_statistics()
 
-plt.ion()
-plt.show()
-plt.rcParams["figure.figsize"] = [16,9]
-
-while True:
-    stats.collect_statistics(1000,True)
-    plt.clf()
-    stats.plot_histogram()
-    plt.draw()
-    plt.pause(0.02)
-    
+stats.plot_histogram()
+plt.savefig('plot')
 
 
