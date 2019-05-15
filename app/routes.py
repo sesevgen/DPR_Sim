@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from utils import Diceset, d20Set, Action, Statistics
 from io import BytesIO
 
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 app = Flask(__name__, static_url_path='/static')      
  
 @app.route('/')
 def home():
-    return render_template('home.html')
+    dice1 = 8
+    dice2 = 6
+    d20 = d20Set(1)
+    diceset= Diceset([(dice1,dice2)])
+    action = Action(d20,0,diceset,crit_numbers=[],fail_dmg_scale=0.5)
+    stats = Statistics(action)
+    stats.collect_statistics()
+
+    return render_template('home.html', imagepath='static/img/placeholder.png', stats=stats.report_statistics())
     
   
 @app.route('/about')
@@ -28,13 +35,12 @@ def calculate():
     action = Action(d20,0,diceset,crit_numbers=[],fail_dmg_scale=0.5)
     stats = Statistics(action)
     stats.collect_statistics()
-    fig, ax = plt.subplots(1)
     stats.plot_histogram()
-    canvas = FigureCanvas(fig)
-    img = BytesIO()
-    fig.savefig(img)
-    img.seek(0)
-    return send_file(img,mimetype='image/png') 
+    plotname = 'static/img/'+str(dice1)+str(dice2)+'.png'
+    plt.savefig(plotname)
+    plt.clf()
+
+    return render_template('home.html', imagepath=plotname, stats=stats.report_statistics())
     
     
 if __name__ == '__main__':

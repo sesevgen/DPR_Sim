@@ -6,6 +6,7 @@ if not have_display:
     matplotlib.use('Agg')
     
 import matplotlib.pyplot as plt
+import numpy as np
 
 class Diceset:
     '''
@@ -189,9 +190,13 @@ class Statistics:
     
     def __init__(self,action):        
         self.statistics = []
+
+        self.action = action
+
         self.max_damage = 0
         self.min_damage = 0
-        self.action = action
+        self.avg_damage = 0
+        self.percentiles=[0,0,0,0,0] #90, 75, 50, 25, 10
         
     def reset_statistics(self):
         self.statistics = []
@@ -215,6 +220,19 @@ class Statistics:
             
         self.max_damage = max(self.statistics)
         self.min_damage = min(self.statistics)
+        self.avg_damage = sum(self.statistics)/len(self.statistics)
+
+        self.statistics.sort()
+
+        self.percentiles[0] = np.percentile(self.statistics,10)
+        self.percentiles[1] = np.percentile(self.statistics,25)
+        self.percentiles[2] = np.percentile(self.statistics,50)
+        self.percentiles[3] = np.percentile(self.statistics,75)
+        self.percentiles[4] = np.percentile(self.statistics,90)
+
+    def report_statistics(self):
+        return {'Min':self.min_damage,'Max':self.max_damage,'Avg':self.avg_damage,'Percentiles':self.percentiles}
+
     
 if __name__ ==  '__main__':
     print("hey")

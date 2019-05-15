@@ -3,13 +3,25 @@
     <div class="jumbo">
         <h2>DPR Simulator<h2>
     </div>
-    <form action="/register" method="post">
+    <form action="/calculate" method="post">
         Roll
-        <input autocomplete="off" autofocus name="name" placeholder="8" type="text" size="1"/>
+        <input autocomplete="off" autofocus name="dice1" placeholder="8" type="text" size="1"/>
         d
-        <input autocomplete="off" autofocus name="name" placeholder="6" type="text"size="1"/>
+        <input autocomplete="off" autofocus name="dice2" placeholder="6" type="text"size="1"/>
         <input type="submit" value="Calculate DPR"/>
-        
-        <img src="/calculate" alt="static/img/placeholder.png">
+        <br>
     </form>
+        
+        <img src="{{ imagepath }}">
+        <br>
+  
+		<table class="centered thick-border">
+	        {% for k, v in stats.items() %}
+	            <tr>
+	                <td class="centered thin-border">{{ k }}</td>
+	                <td class="centered thin-border">{{ v }}</td>
+	            </tr>
+	        {% endfor %}
+		</table>
+
 {% endblock %}

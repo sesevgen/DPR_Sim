@@ -84,3 +84,12 @@ h3 {
   color: #999;
   text-decoration: none;
 }
+
+.thick-border {
+        border: 3px solid black;
+        border-collapse: collapse;
+}
+
+.thin-border {
+  border: 1px solid black;
+}
