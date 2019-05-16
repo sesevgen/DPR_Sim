@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="jumbo">
+        <h2>DPR Simulator<h2>
+    </div>
+    <form action="/calculate" method="post">
+        Roll
+        <input autocomplete="off" autofocus name="dice1" type="text" size="1"/>
+        d
+        <input autocomplete="off" autofocus name="dice2" type="text"size="1"/>
+        
+        <br>
+        <br>
+        Optionally: 
+        <br>
+        
+        Reroll results equal to
+        <input autocomplete="off" autofocus name="reroll_equal_to" placeholder="0" type="text"size="1"/>
+        Ex, Great Weapon Fighting Style: 1,2)
+        <br>
+        
+        Reroll the lowest 
+        <input autocomplete="off" autofocus name="reroll_lowest" placeholder="0" type="text"size="1"/>
+        dice (Ex. Empower Spell: Cha Mod)
+        <br>
+        
+        Set the minimum outcome of each dice to 
+        <input autocomplete="off" autofocus name="roll_min" placeholder="0" type="text"size="1"/>
+        (Ex. Elemental Adept: 2)
+        <br>
+            
+        Drop the lowest
+        <input autocomplete="off" autofocus name="drop_lowest" placeholder="0" type="text"size="1"/>
+        (Ex: 4d6 drop lowest for stats: 1)
+        <br>
+        
+        <input type="submit" value="Calculate Statistics"/>
+        <br>
+    </form>
+    
+    
+        <br>
+        <br>
+        <br>
+        Rolled {{ details[0] }}d{{ details[1] }} 
+        {% if details[2] != [] %} and rerolled all {% for a in details[2] %}{{a}}s,{% endfor %} {% endif %}
+        {% if details[3] != 0 %}, rerolled the lowest {{ details[3] }} {% endif %}
+        {% if details[4] != 0 %} with the minimum at {{ details[4] }} {% endif %}
+        {% if details[5] != 0 %} and dropped the lowest {{ details[5] }} {% endif %}
+        <br>
+        
+        <img src="{{ imagepath }}">
+        <br>
+  
+		<table class="centered thick-border">
+	        {% for k, v in stats.items() %}
+	            <tr>
+	                <td class="centered thin-border">{{ k }}</td>
+	                <td class="centered thin-border">{{ v }}</td>
+	            </tr>
+	        {% endfor %}
+		</table>
+
+{% endblock %}

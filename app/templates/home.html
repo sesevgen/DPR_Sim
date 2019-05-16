@@ -1,27 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="jumbo">
-        <h2>DPR Simulator<h2>
+        <h2>DnD 5e Simulator<h2>
     </div>
-    <form action="/calculate" method="post">
-        Roll
-        <input autocomplete="off" autofocus name="dice1" placeholder="8" type="text" size="1"/>
-        d
-        <input autocomplete="off" autofocus name="dice2" placeholder="6" type="text"size="1"/>
-        <input type="submit" value="Calculate DPR"/>
-        <br>
-    </form>
-        
-        <img src="{{ imagepath }}">
-        <br>
-  
-		<table class="centered thick-border">
-	        {% for k, v in stats.items() %}
-	            <tr>
-	                <td class="centered thin-border">{{ k }}</td>
-	                <td class="centered thin-border">{{ v }}</td>
-	            </tr>
-	        {% endfor %}
-		</table>
+    <li><a href="{{ url_for('home') }}">Home</a></li>
+    <li><a href="{{ url_for('about') }}">About</a></li>
+    <li><a href="{{ url_for('distributions') }}">Simple Dice Distributions</a></li>
 
 {% endblock %}

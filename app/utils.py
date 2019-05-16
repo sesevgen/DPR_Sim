@@ -17,6 +17,7 @@ class Diceset:
     reroll_equal_to: Reroll dice that are equal to numbers in this list. Ex: Great Weapon Fighting [1,2]
     min_roll: Rolls less than this number are set to this number. Ex: Elemental Adept 2
     nr_dice_reroll: Reroll the smallest X number of dice, where X is this number. Ex: Empower X = 5 for Cha = 5
+    drop_lowest: Drop the lowest X number of dice, where this is X. Ex: 4d6 drop lowest for stats
     '''
     
     
@@ -24,12 +25,14 @@ class Diceset:
                 dice=[],
                 reroll_equal_to = [],
                 roll_min = 0,
-                nr_dice_reroll = 0):
+                nr_dice_reroll = 0,
+                drop_lowest = 0):
                 
         self.dice = dice
         self.reroll_equal_to = reroll_equal_to
         self.roll_min = roll_min
         self.nr_dice_reroll = nr_dice_reroll
+        self.drop_lowest = drop_lowest
         
     def roll_one_dice(self,dice_max):
 
@@ -63,9 +66,12 @@ class Diceset:
                 # Sort lowest to highest
                 rolls.sort()
 
-                # Reroll the lowest X
+                # Reroll the lowest requested
                 for i in range(self.nr_dice_reroll):
                     rolls[i] = self.roll_one_dice(d[1])
+                    
+            # Drop lowest reroll
+            rolls = rolls[self.drop_lowest:]    
                     
             return rolls
             
