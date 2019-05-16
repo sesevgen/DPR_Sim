@@ -3,7 +3,7 @@
     <div class="jumbo">
         <h2>DPR Simulator<h2>
     </div>
-    <form action="/calculate" method="post">
+    <form action="/add" method="post">
         Roll
         <input autocomplete="off" autofocus name="dice1" type="text" size="1"/>
         d
@@ -34,31 +34,61 @@
         (Ex: 4d6 drop lowest for stats: 1)
         <br>
         
-        <input type="submit" value="Calculate Statistics"/>
+        <input type="submit" value="Add to Calculations"/>
         <br>
     </form>
     
-    
+        {% if conditions != [] and collecting%}
+            Comparing:
+            {% for details in conditions %}
+                <br>
+                {{ details[0] }}d{{ details[1] }} 
+                {% if details[2] != [] %} and rerolled all {% for a in details[2] %}{{a}}s,{% endfor %} {% endif %}
+                {% if details[3] != 0 %}, rerolled the lowest {{ details[3] }} {% endif %}
+                {% if details[4] != 0 %} with the minimum at {{ details[4] }} {% endif %}
+                {% if details[5] != 0 %} and dropped the lowest {{ details[5] }} {% endif %}
+            {% endfor %}
+        {% else %}
+            No calculations
+        {% endif %}
+
+    <form action="/calculate" method="post">
+        <input type="submit" value="Calculate"/>
+    </form>
+
+    <form action="/reset" method="post">
+        <input type="submit" value="Reset Comparison Pool"/>
+    </form>
+
         <br>
         <br>
         <br>
-        Rolled {{ details[0] }}d{{ details[1] }} 
-        {% if details[2] != [] %} and rerolled all {% for a in details[2] %}{{a}}s,{% endfor %} {% endif %}
-        {% if details[3] != 0 %}, rerolled the lowest {{ details[3] }} {% endif %}
-        {% if details[4] != 0 %} with the minimum at {{ details[4] }} {% endif %}
-        {% if details[5] != 0 %} and dropped the lowest {{ details[5] }} {% endif %}
+
+        {% if conditions != [] and not collecting %}
+            Compared:
+            {% for details in conditions %}
+                <br>
+                {{ details[0] }}d{{ details[1] }} 
+                {% if details[2] != [] %} and rerolled all {% for a in details[2] %}{{a}}s,{% endfor %} {% endif %}
+                {% if details[3] != 0 %}, rerolled the lowest {{ details[3] }} {% endif %}
+                {% if details[4] != 0 %} with the minimum at {{ details[4] }} {% endif %}
+                {% if details[5] != 0 %} and dropped the lowest {{ details[5] }} {% endif %}
+            {% endfor %}
+        {% endif %}
         <br>
         
         <img src="{{ imagepath }}">
         <br>
-  
-		<table class="centered thick-border">
-	        {% for k, v in stats.items() %}
-	            <tr>
-	                <td class="centered thin-border">{{ k }}</td>
-	                <td class="centered thin-border">{{ v }}</td>
-	            </tr>
-	        {% endfor %}
-		</table>
+
+        {% for stat in stats %}  
+    		<table class="centered thick-border">
+    	        {% for k, v in stat.items() %}
+    	            <tr>
+    	                <td class="centered thin-border">{{ k }}</td>
+    	                <td class="centered thin-border">{{ v }}</td>
+    	            </tr>
+    	        {% endfor %}
+    		</table>
+        {% endfor %}
 
 {% endblock %}
