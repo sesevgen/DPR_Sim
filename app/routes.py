@@ -77,7 +77,7 @@ def calculate():
     stats.collect_statistics()
     stats.plot_histogram()
     
-    plotname = 'static/img'
+    plotname = 'static/img/'
     for detail in details:
         plotname = plotname + str(detail)
     plotname = plotname + '.png'
