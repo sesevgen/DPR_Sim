@@ -2,7 +2,8 @@
 
 from flask import Flask, render_template, request
 from utils import Diceset, d20Set, Action, Statistics
-from io import BytesIO
+
+import os
 
 import matplotlib.pyplot as plt
 
@@ -47,6 +48,11 @@ def distributions():
     
 @app.route('/calculate',methods=['POST'])
 def calculate():
+    dir = 'static/img/temp/'
+    files = os.listdir(dir)
+    for file in files:
+        os.remove(os.path.join(dir,file))
+        
     dice1 = int(request.form.get('dice1'))
     dice2 = int(request.form.get('dice2'))
     try:
@@ -77,7 +83,7 @@ def calculate():
     stats.collect_statistics()
     stats.plot_histogram()
     
-    plotname = 'static/img/'
+    plotname = 'static/img/temp/'
     for detail in details:
         plotname = plotname + str(detail)
     plotname = plotname + '.png'
