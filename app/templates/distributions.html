@@ -38,7 +38,7 @@
         <br>
     </form>
     
-        {% if conditions != [] and collecting%}
+        {% if conditions != [] and collecting %}
             Comparing:
             {% for details in conditions %}
                 <br>
@@ -80,8 +80,9 @@
         <img src="{{ imagepath }}">
         <br>
 
-        {% for stat in stats %}  
-    		<table class="centered thick-border">
+        {% for stat in stats %} 
+            <br> 
+    		<table class="centered thick-border" caption="Condition {{ loop.index0 }}">
     	        {% for k, v in stat.items() %}
     	            <tr>
     	                <td class="centered thin-border">{{ k }}</td>

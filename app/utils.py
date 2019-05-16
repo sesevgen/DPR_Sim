@@ -207,9 +207,9 @@ class Statistics:
     def reset_statistics(self):
         self.statistics = []
         
-    def plot_histogram(self,alpha=1.0):    
+    def plot_histogram(self,alpha=1.0,label='0'):    
         #plot = plt.figure()
-        plt.hist(self.statistics,bins = self.max_damage+1,range = [-0.5,self.max_damage+0.5],density=True,alpha=alpha)
+        plt.hist(self.statistics,bins = self.max_damage+1,range = [-0.5,self.max_damage+0.5],density=True,alpha=alpha,label=label)
         #return plot
 
     def plot_cumulative(self):        

@@ -96,8 +96,9 @@ def calculate():
 
 
 
-    alpha = 1.0/len(conditions)
+    alpha = 0.9**len(conditions)
     statistics = []
+    i = 0
     for details in conditions:
 
         d20 = d20Set(1)
@@ -105,7 +106,8 @@ def calculate():
         action = Action(d20,0,diceset,crit_numbers=[],fail_dmg_scale=0.0)
         stats = Statistics(action)
         stats.collect_statistics()
-        stats.plot_histogram(alpha)
+        stats.plot_histogram(alpha, str(i) )
+        i += 1
         statistics.append(stats.report_statistics())
 
     plotname = 'static/img/temp/'
@@ -119,7 +121,7 @@ def calculate():
     plt.savefig(os.path.join(root,plotname))
     plt.clf()
 
-    return render_template('distributions.html', imagepath=plotname, stats=statistics,conditions=conditions, collecting=False)
+    return render_template('distributions.html', imagepath=plotname, stats=statistics,conditions=copyconditions, collecting=False)
 
 
 if __name__ == '__main__':
