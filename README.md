@@ -3,4 +3,4 @@ Simulations of dice rolls for damage curves, ability scores etc. with the main g
 
 A little side project to learn Flask and a bit of SQL.
 
-Currently hosted at [asmerv.pythonanywhere.com](asmerv.pythonanywhere.com)
+Currently hosted at http://asmerv.pythonanywhere.com
