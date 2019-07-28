@@ -8,6 +8,20 @@ if not have_display:
 import matplotlib.pyplot as plt
 import numpy as np
 
+class Dice:
+    def __init__(nrSides=None, actualSides=None):
+    """
+    Small class that allows custom dice
+    """
+    self.dice = []
+    if nrSides is not None:
+        assert isinstance(nrSides, int)
+        self.dice = range(nrSides)
+    elif actualSides is not None:
+        self.dice = actualSides
+    else:
+        print("Please define dice either through nr of sides or by explicitly passing a list of sides.")
+
 class Diceset:
     '''
     A class that holds a set of dice and modifications and allows rolling subject to modifications
