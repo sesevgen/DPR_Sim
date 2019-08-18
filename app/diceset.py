@@ -4,7 +4,7 @@ class Diceset:
     subject to modifications
 
     Inputs:
-    dice: List of tuples (Nr of dice, sides of dice) to roll
+    dice: List of Dice
 
     reroll_equal_to: Reroll dice that are equal to numbers in this list
     Ex: Great Weapon Fighting [1,2]
