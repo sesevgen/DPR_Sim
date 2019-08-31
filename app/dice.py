@@ -40,7 +40,7 @@ class Dice:
         :param number: number of times to roll, defaults to 1
         :type number: int, optional
         :return: results of roll
-        :rtype: list of ints
+        :rtype: list[int]
         """
         rolls = np.array([random.choice(self.dice) for i in range(number)])
         rolls.sort()

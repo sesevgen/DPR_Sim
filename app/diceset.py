@@ -4,13 +4,7 @@ class Diceset:
     subject to modifications
 
     Inputs:
-    dice: List of Dice
-
-    reroll_equal_to: Reroll dice that are equal to numbers in this list
-    Ex: Great Weapon Fighting [1,2]
-
-    min_roll: Rolls less than this number are set to this number
-    Ex: Elemental Adept 2
+    dice: List[Dice]
 
     nr_dice_reroll: Reroll the smallest X results, where X is this number
     Ex: Empower X = 5 for Cha = 5
@@ -21,30 +15,12 @@ class Diceset:
 
     def __init__(self,
                  dice=[],
-                 reroll_equal_to=[],
-                 roll_min=0,
                  nr_dice_reroll=0,
                  drop_lowest=0):
 
         self.dice = dice
-        self.reroll_equal_to = reroll_equal_to
-        self.roll_min = roll_min
         self.nr_dice_reroll = nr_dice_reroll
         self.drop_lowest = drop_lowest
-
-    def roll_one_dice(self, dice_max):
-
-        # Roll one of the dice
-        roll = random.randint(1, dice_max)
-
-        # Reroll if in reroll list
-        if roll in self.reroll_equal_to:
-            roll = random.randint(1, dice_max)
-
-        # Check if it's more than the min
-        roll = max(roll, self.roll_min)
-
-        return roll
 
     def roll_all_dice(self):
         if len(self.dice) == 0:
